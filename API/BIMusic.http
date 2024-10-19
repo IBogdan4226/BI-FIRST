@@ -1,0 +1,6 @@
+@BIMusic_HostAddress = http://localhost:5214
+
+GET {{BIMusic_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
