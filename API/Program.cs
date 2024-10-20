@@ -295,7 +295,7 @@ app.MapGet("/countryGenreSales/{country}/{genre}", async (string country, string
                 GROUP BY 
                     c.country, g.Name, month
                 ORDER BY 
-                    total_sales DESC;"; // Order by total sales in descending order
+                    3 asc;"; // Order by total sales in descending order
 
     using (var command = new NpgsqlCommand(queryBuilder, connection)) // Use NpgsqlCommand
     {
