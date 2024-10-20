@@ -1,4 +1,3 @@
-// actions/salesActions.js
 import axios from 'axios';
 import { CountrySalesData, GenreSalesData, SalesData } from '@/types/type';
 
@@ -30,7 +29,16 @@ export const _getGenreSales = async (
   dateStart?: string,
   dateEnd?: string
 ) => {
-  const url = `https://3dmb718n-5000.euw.devtunnels.ms/genresales/${genre}?startDate=${dateStart}&endDate=${dateEnd}`;
+  let url = `https://3dmb718n-5000.euw.devtunnels.ms/genresales/${genre}?`;
+
+  if (dateStart) {
+    url = `${url}startDate=${dateStart}`;
+  }
+
+  if (dateEnd) {
+    url = `${url}&endDate=${dateEnd}`;
+  }
+
   try {
     const response = await axios.get<GenreSalesData[]>(url);
     return response.data;
@@ -42,16 +50,24 @@ export const _getGenreSales = async (
 
 export const _getCountrySales = async (
   country: string,
-  genre?: string,
+  genre: string,
   dateStart?: string,
   dateEnd?: string
 ) => {
-  let url = `https://3dmb718n-5000.euw.devtunnels.ms/countrySales/${country}`;
-  if (genre) {
-    url = `${url}/${genre}`;
+  let url = `https://3dmb718n-5000.euw.devtunnels.ms`;
+  if (genre != 'All') {
+    url = `${url}/countryGenreSales/${country}/${genre}`;
+  }else{
+    url = `${url}/countrySales/${country}`;
+  }
+  url += '?';
+  if (dateStart) {
+    url = `${url}startDate=${dateStart}`;
   }
 
-  url = `${url}?startDate=${dateStart}&endDate=${dateEnd}`;
+  if (dateEnd) {
+    url = `${url}&endDate=${dateEnd}`;
+  }
 
   try {
     const response = await axios.get<CountrySalesData[]>(url);

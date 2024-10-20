@@ -1,5 +1,4 @@
 export const COUNTRY_LIST = [
-    "Argentina",
     "Spain",
     "Italy",
     "Hungary",
@@ -26,6 +25,7 @@ export const COUNTRY_LIST = [
 ];
 
 export const GENRE_LIST = [
+    "All",
     "Soundtrack",
     "Electronica/Dance",
     "Easy Listening",
