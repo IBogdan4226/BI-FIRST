@@ -172,7 +172,7 @@ export function DataByCountry() {
             fullWidth
           >
             {COUNTRY_LIST.map((country) => {
-              return <MenuItem value={country}>{country}</MenuItem>;
+              return <MenuItem value={country} key={country}>{country}</MenuItem>;
             })}
           </Select>
         </Box>
@@ -181,7 +181,7 @@ export function DataByCountry() {
           <InputLabel>Genre</InputLabel>
           <Select value={genreSelected} onChange={handleGenreChange} fullWidth>
             {GENRE_LIST.map((genre) => {
-              return <MenuItem value={genre}>{genre}</MenuItem>;
+              return <MenuItem value={genre} key={genre}>{genre}</MenuItem>;
             })}
           </Select>
         </Box>

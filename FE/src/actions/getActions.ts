@@ -5,7 +5,7 @@ export const _getTotalSales = async (
   dateStart?: string,
   dateEnd?: string
 ): Promise<SalesData[]> => {
-  let url = `https://3dmb718n-5000.euw.devtunnels.ms/totalsales?`;
+  let url = `http://localhost:5036/totalsales?`;
 
   if (dateStart) {
     url = `${url}startDate=${dateStart}`;
@@ -29,7 +29,7 @@ export const _getGenreSales = async (
   dateStart?: string,
   dateEnd?: string
 ) => {
-  let url = `https://3dmb718n-5000.euw.devtunnels.ms/genresales/${genre}?`;
+  let url = `http://localhost:5036/genresales/${genre}?`;
 
   if (dateStart) {
     url = `${url}startDate=${dateStart}`;
@@ -54,7 +54,7 @@ export const _getCountrySales = async (
   dateStart?: string,
   dateEnd?: string
 ) => {
-  let url = `https://3dmb718n-5000.euw.devtunnels.ms`;
+  let url = `http://localhost:5036`;
   if (genre != 'All') {
     url = `${url}/countryGenreSales/${country}/${genre}`;
   }else{

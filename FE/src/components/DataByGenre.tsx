@@ -161,7 +161,7 @@ export function DataByGenre() {
           <InputLabel>Genre</InputLabel>
           <Select value={genreSelected} onChange={handleGenreChange} fullWidth>
             {GENRE_LIST.slice(1).map((genre) => {
-              return <MenuItem value={genre}>{genre}</MenuItem>;
+              return <MenuItem value={genre} key={genre}>{genre}</MenuItem>;
             })}
           </Select>
         </Box>
