@@ -1,4 +1,5 @@
 import {
+  _exportGenreSales,
   _getCountrySales,
   _getGenreSales,
   _getTotalSales,
@@ -7,6 +8,7 @@ import { COUNTRY_LIST, GENRE_LIST } from '@/consts';
 import { CountrySalesData, GenreSalesData, SalesData } from '@/types/type';
 import {
   Box,
+  Button,
   InputLabel,
   MenuItem,
   Paper,
@@ -157,16 +159,20 @@ export function DataByGenre() {
   return (
     <>
       <Box display="flex" alignItems={'center'} gap={2} marginBottom={2}>
-        <Box width={'20%'}>
+        <Box width={'25%'}>
           <InputLabel>Genre</InputLabel>
           <Select value={genreSelected} onChange={handleGenreChange} fullWidth>
             {GENRE_LIST.slice(1).map((genre) => {
-              return <MenuItem value={genre} key={genre}>{genre}</MenuItem>;
+              return (
+                <MenuItem value={genre} key={genre}>
+                  {genre}
+                </MenuItem>
+              );
             })}
           </Select>
         </Box>
 
-        <Box width={'20%'}>
+        <Box width={'25%'}>
           <InputLabel>Type</InputLabel>
           <Select
             value={selectedMetric}
@@ -178,7 +184,7 @@ export function DataByGenre() {
           </Select>
         </Box>
 
-        <Box width={'20%'}>
+        <Box>
           <InputLabel>Start Day</InputLabel>
           <DatePicker
             value={startDate}
@@ -189,7 +195,7 @@ export function DataByGenre() {
           />
         </Box>
 
-        <Box width={'20%'}>
+        <Box>
           <InputLabel>End Day</InputLabel>
           <DatePicker
             value={endDate}
@@ -217,6 +223,32 @@ export function DataByGenre() {
         )}
       </Box>
 
+      <Box
+        display="flex"
+        justifyContent={'center'}
+        gap={2}
+        marginBottom={2}
+        flexDirection={'column'}
+        width={'100%'}
+      >
+        <InputLabel>Export section</InputLabel>
+        <Box>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const startString = startDate
+                ? startDate.toISOString().split('T')[0]
+                : '';
+              const endString = endDate
+                ? endDate.toISOString().split('T')[0]
+                : '';
+              _exportGenreSales(startString, endString);
+            }}
+          >
+            Export
+          </Button>
+        </Box>
+      </Box>
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />

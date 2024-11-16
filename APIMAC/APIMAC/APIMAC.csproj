@@ -17,9 +17,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="EPPlus" Version="7.5.0" />
+      <PackageReference Include="EPPlus.Interfaces" Version="7.5.0" />
+      <PackageReference Include="EPPlus.System.Drawing" Version="7.5.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0-rc.2" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.9.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
-import { _getTotalSales } from '@/actions/getActions';
+import { _exportTotalSales, _getTotalSales } from '@/actions/getActions';
+import { trendEstimationFunctions } from '@/consts';
 import { SalesData } from '@/types/type';
 import {
   Box,
+  Button,
   InputLabel,
   MenuItem,
   Paper,
@@ -40,7 +42,8 @@ export function DataByTotalSales() {
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [linearEstimate, setLinearEstimate] = useState<number | null>(null);
   const [monthYearInput, setMonthYearInput] = useState<string>('');
-
+  const [trendingType, setTrendingType] = useState<number>(0);
+  const [monthsIntoFuture, setMonthsIntoFuture] = useState<number>(0);
   useEffect(() => {
     getData(startDate, endDate);
   }, [startDate, endDate]);
@@ -55,6 +58,10 @@ export function DataByTotalSales() {
 
   const handleMetricChange = (event: any) => {
     setSelectedMetric(event.target.value as 'totalSales' | 'numberOfSales');
+  };
+
+  const handleTrendingChange = (event: any) => {
+    setTrendingType(event.target.value);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -151,12 +158,60 @@ export function DataByTotalSales() {
         <button onClick={handleEstimate}>Estimate</button>
         {linearEstimate !== null && (
           <div>
-            <h4>
-              Estimated Total Sales: $
-              {linearEstimate.toFixed(2)}
-            </h4>
+            <h4>Estimated Total Sales: ${linearEstimate.toFixed(2)}</h4>
           </div>
         )}
+      </Box>
+      <Box
+        display="flex"
+        justifyContent={'center'}
+        gap={2}
+        marginBottom={2}
+        flexDirection={'column'}
+        width={'100%'}
+      >
+        <InputLabel>Export section</InputLabel>
+        <Box width={'25%'}>
+          <InputLabel>Function Type</InputLabel>
+          <Select value={trendingType} onChange={handleTrendingChange}>
+            {trendEstimationFunctions.map((func, index) => {
+              return (
+                <MenuItem value={index} key={index}>
+                  {func}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </Box>
+        <Box display="flex" alignItems={'center'} gap={2} marginBottom={2}>
+          <InputLabel>Months into the future</InputLabel>
+          <input
+            type="number"
+            value={monthsIntoFuture}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              if (value >= 0) {
+                setMonthsIntoFuture(value);
+              }
+            }}
+          />
+        </Box>
+        <Box>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const startString = startDate
+                ? startDate.toISOString().split('T')[0]
+                : '';
+              const endString = endDate
+                ? endDate.toISOString().split('T')[0]
+                : '';
+              _exportTotalSales(startString, endString, monthsIntoFuture, trendingType);
+            }}
+          >
+            Export
+          </Button>
+        </Box>
       </Box>
 
       <ResponsiveContainer width="100%" height={250}>

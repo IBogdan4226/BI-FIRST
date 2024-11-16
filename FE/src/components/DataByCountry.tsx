@@ -1,8 +1,13 @@
-import { _getCountrySales, _getTotalSales } from '@/actions/getActions';
-import { COUNTRY_LIST, GENRE_LIST } from '@/consts';
-import { CountrySalesData, SalesData } from '@/types/type';
+import {
+  _exportCountrySales,
+  _getCountrySales,
+  _getCountryTotalSales,
+} from '@/actions/getActions';
+import { COUNTRY_LIST, GENRE_LIST, trendEstimationFunctions } from '@/consts';
+import { CountrySalesData } from '@/types/type';
 import {
   Box,
+  Button,
   InputLabel,
   MenuItem,
   Paper,
@@ -30,9 +35,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { Map } from './Map/Map';
 
 export function DataByCountry() {
   const [countryData, setCountryData] = useState<CountrySalesData[]>([]);
+  const [countryAllData, setCountryAllData] = useState<CountrySalesData[]>([]);
+
   const [selectedMetric, setSelectedMetric] = useState<
     'totalSales' | 'numberOfSales'
   >('totalSales');
@@ -48,7 +56,8 @@ export function DataByCountry() {
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [linearEstimate, setLinearEstimate] = useState<number | null>(null);
   const [monthYearInput, setMonthYearInput] = useState<string>('');
-
+  const [trendingType, setTrendingType] = useState<number>(0);
+  const [monthsIntoFuture, setMonthsIntoFuture] = useState<number>(0);
   useEffect(() => {
     getData(countrySelected, genreSelected, startDate, endDate);
   }, [countrySelected, genreSelected, startDate, endDate]);
@@ -63,6 +72,9 @@ export function DataByCountry() {
     const endString = end ? end.toISOString().split('T')[0] : '';
 
     const data = await _getCountrySales(country, genre, startString, endString);
+    const data2 = await _getCountryTotalSales(genre, startString, endString);
+
+    setCountryAllData(data2);
     setCountryData(data);
   };
 
@@ -80,6 +92,10 @@ export function DataByCountry() {
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
+  };
+
+  const handleTrendingChange = (event: any) => {
+    setTrendingType(event.target.value);
   };
 
   const handleChangeRowsPerPage = (
@@ -172,7 +188,11 @@ export function DataByCountry() {
             fullWidth
           >
             {COUNTRY_LIST.map((country) => {
-              return <MenuItem value={country} key={country}>{country}</MenuItem>;
+              return (
+                <MenuItem value={country} key={country}>
+                  {country}
+                </MenuItem>
+              );
             })}
           </Select>
         </Box>
@@ -181,7 +201,11 @@ export function DataByCountry() {
           <InputLabel>Genre</InputLabel>
           <Select value={genreSelected} onChange={handleGenreChange} fullWidth>
             {GENRE_LIST.map((genre) => {
-              return <MenuItem value={genre} key={genre}>{genre}</MenuItem>;
+              return (
+                <MenuItem value={genre} key={genre}>
+                  {genre}
+                </MenuItem>
+              );
             })}
           </Select>
         </Box>
@@ -198,7 +222,7 @@ export function DataByCountry() {
           </Select>
         </Box>
 
-        <Box width={'20%'}>
+        <Box>
           <InputLabel>Start Day</InputLabel>
           <DatePicker
             value={startDate}
@@ -209,7 +233,7 @@ export function DataByCountry() {
           />
         </Box>
 
-        <Box width={'20%'}>
+        <Box>
           <InputLabel>End Day</InputLabel>
           <DatePicker
             value={endDate}
@@ -236,7 +260,64 @@ export function DataByCountry() {
           </div>
         )}
       </Box>
-
+      <Box
+        display="flex"
+        justifyContent={'center'}
+        gap={2}
+        marginBottom={2}
+        flexDirection={'column'}
+        width={'100%'}
+      >
+        <InputLabel>Export section</InputLabel>
+        <Box width={'25%'}>
+          <InputLabel>Function Type</InputLabel>
+          <Select value={trendingType} onChange={handleTrendingChange}>
+            {trendEstimationFunctions.map((func, index) => {
+              return (
+                <MenuItem value={index} key={index}>
+                  {func}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </Box>
+        <Box display="flex" alignItems={'center'} gap={2} marginBottom={2}>
+          <InputLabel>Months into the future</InputLabel>
+          <input
+            type="number"
+            value={monthsIntoFuture}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              if (value >= 0) {
+                setMonthsIntoFuture(value);
+              }
+            }}
+          />
+        </Box>
+        <Box>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const startString = startDate
+                ? startDate.toISOString().split('T')[0]
+                : '';
+              const endString = endDate
+                ? endDate.toISOString().split('T')[0]
+                : '';
+              _exportCountrySales(
+                countrySelected,
+                genreSelected,
+                startString,
+                endString,
+                monthsIntoFuture,
+                trendingType
+              );
+            }}
+          >
+            Export
+          </Button>
+        </Box>
+      </Box>
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -299,6 +380,9 @@ export function DataByCountry() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <Box display="flex" justifyContent={'center'} alignItems={'center'}>
+        <Map countryData={countryAllData} />
+      </Box>
     </>
   );
 }
